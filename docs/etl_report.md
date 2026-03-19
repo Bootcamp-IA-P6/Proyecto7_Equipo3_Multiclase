@@ -75,107 +75,25 @@ df_etl.loc[df_etl['target_tipo_ui'] == 'other', 'target_tipo_ui'] = 'urge'
 
 NHANES codifica las respuestas binarias como 1=Sí / 2=No. Se recodifican al estándar ML (1=Sí / 0=No) usando `.map({1: 1, 2: 0})`.
 
-Este paso se ejecuta **antes** del KNNImputer para garantizar que la imputación opera sobre la escala correcta (0/1) y el redondeo posterior produce valores válidos.
-
-```python
-binary_cols = [
-    'dx_hipertension', 'dx_diabetes', 'dx_cancer', 'dx_artritis',
-    'fumadora_alguna_vez', 'actividad_fisica_vigorosa',
-    'ui_esfuerzo_presente', 'ui_urgencia_presente', 'ui_otro_tipo_presente',
-]
-for col in binary_cols:
-    if col in df_etl.columns:
-        df_etl[col] = df_etl[col].map({1: 1, 2: 0})
-```
+Este paso se ejecuta **antes** del KNNImputer para garantizar que la imputación opera sobre la escala cor
 
 ---
 
-## Paso 5 — Imputación simple por moda y mediana (Sección 8.6)
+## Paso 9 — Pipeline de Preprocesamiento y Persistencia
 
-Para variables con menos del 5% de missings se usa la estrategia más simple, adecuada cuando los missings son escasos y sin patrón claro.
+Tras la limpieza inicial, se han aplicado las siguientes transformaciones críticas para preparar los datos para el modelado:
 
-| Variable | Missings | Estrategia |
-|---|---|---|
-| `pais_nacimiento` | <0.1% | Moda |
-| `dx_hipertension` | <0.1% (tras CDC codes) | Moda |
-| `dx_diabetes` | <0.1% (tras CDC codes) | Moda |
-| `dx_cancer` | <0.1% (tras CDC codes) | Moda |
-| `dx_artritis` | <0.1% (tras CDC codes) | Moda |
-| `fumadora_alguna_vez` | <0.1% | Moda |
-| `edad_anios` | ~1% (92 casos, CDC code 77) | Mediana — distribución asimétrica |
+### 9.1. Estandarización de Variables (Scalers)
+Se ha aplicado `StandardScaler` a las variables continuas (`edad_anios`, `imc` y `economic_status`). Esto asegura que el modelo no se vea sesgado por la magnitud de las variables y que todas contribuyan equitativamente al aprendizaje.
 
----
+### 9.2. Cambio de Nomenclatura Profesional
+La variable original de nivel de pobreza se ha renombrado a **`economic_status`**. Esta decisión mejora la interpretabilidad técnica y alinea el dataset con estándares internacionales de informes de salud.
 
-## Paso 6 — Imputación KNN para variables MAR (Sección 8.7)
+### 9.3. Balanceo de Clases (SMOTE)
+Debido al desequilibrio en la variable objetivo, se implementó la técnica **SMOTE (Synthetic Minority Over-sampling Technique)**.
+* **Justificación:** Prevenir el sesgo del modelo hacia la clase mayoritaria y mejorar el *Recall* en el diagnóstico de tipos de incontinencia minoritarios.
+* **Resultado:** Distribución equilibrada al 25% por clase.
 
-Para variables con patrón MAR (los missings dependen de otras variables observables) se usa `KNNImputer(n_neighbors=5)`. Busca los 5 vecinos más cercanos en el espacio de todas las variables y usa sus valores para estimar el missing, respetando las correlaciones del dataset.
-
-```python
-from sklearn.impute import KNNImputer
-imputer = KNNImputer(n_neighbors=5)
-df_etl[knn_vars] = imputer.fit_transform(df_etl[knn_vars])
-```
-
-| Variable | % Missing | Tipo de missing |
-|---|---|---|
-| `imc` | 16% | MAR — más missings en participantes jóvenes y clase `none` |
-| `nivel_pobreza_familiar` | 10% | MNAR leve — non-response correlaciona con nivel real de ingresos |
-| `actividad_fisica_vigorosa` | 48% | MAR — más missings en personas mayores y clase `none` |
-| `ui_frecuencia` | 24% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_cantidad` | 61% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_esfuerzo_presente` | 24% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_urgencia_presente` | 24% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_otro_tipo_presente` | 55% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_molestia_percibida` | 74% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-| `ui_impacto_actividades` | 54% | MAR estructural — solo se pregunta a mujeres con UI positiva |
-
----
-
-## Paso 7 — Redondeo y clampeo post-KNN (Sección 8.8)
-
-El KNNImputer opera con promedios ponderados, produciendo valores continuos para variables que deben ser enteras. Se aplica `.round().clip(min, max).astype(int)` a cada variable según su rango válido.
-
-| Variable | Rango válido |
-|---|---|
-| `actividad_fisica_vigorosa` | [0, 1] |
-| `ui_frecuencia` | [1, 6] |
-| `ui_cantidad` | [1, 3] |
-| `ui_esfuerzo_presente` | [0, 1] |
-| `ui_urgencia_presente` | [0, 1] |
-| `ui_otro_tipo_presente` | [0, 1] |
-| `ui_molestia_percibida` | [0, 4] |
-| `ui_impacto_actividades` | [0, 4] |
-
----
-
-## Paso 8 — One-Hot Encoding de variables nominales (Sección 8.9)
-
-Las variables `etnia` y `pais_nacimiento` son nominales (sin orden intrínseco) y se transforman con `pd.get_dummies`.
-
-### Etnia
-
-```python
-etnia_map = {1:'hisp_mex', 2:'hisp_otra', 3:'blanca', 4:'negra', 6:'asiatica', 7:'otra'}
-etnia_dummies = pd.get_dummies(df_etl['etnia_lbl'], prefix='etnia', drop_first=False, dtype=int)
-```
-
-Columnas generadas: `etnia_hisp_mex`, `etnia_hisp_otra`, `etnia_blanca`, `etnia_negra`, `etnia_otra`.  
-Categoría de referencia implícita: `etnia_asiatica`.
-
-### País de nacimiento
-
-```python
-pais_map = {1:'usa', 2:'mexico', 3:'otro'}
-pais_dummies = pd.get_dummies(df_etl['pais_lbl'], prefix='pais', drop_first=False, dtype=int)
-```
-
-Columnas generadas: `pais_usa`, `pais_mexico`.  
-Categoría de referencia implícita: `pais_otro`.
-
-### Nivel de pobreza familiar
-
-Variable numérica continua (ratio ingreso/umbral de pobreza). No requiere encoding — se conserva tal cual.
-
----
-
-*Reporte generado desde `00_eda_etl.ipynb` — 18 de Marzo de 2026*
+### 9.4. Persistencia (Serialization)
+Para garantizar que el modelo en producción (Streamlit) use los mismos parámetros de transformación, se ha guardado el escalador en:
+* `models/pipeline.pkl`
