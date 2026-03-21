@@ -93,6 +93,7 @@ La variable original de nivel de pobreza se ha renombrado a **`economic_status`*
 Debido al desequilibrio en la variable objetivo, se implementó la técnica **SMOTE (Synthetic Minority Over-sampling Technique)**.
 * **Justificación:** Prevenir el sesgo del modelo hacia la clase mayoritaria y mejorar el *Recall* en el diagnóstico de tipos de incontinencia minoritarios.
 * **Resultado:** Distribución equilibrada al 25% por clase.
+> **Nota de actualización (20/03/2026):** Durante la fase de validación de modelos, el equipo detectó que el SMOTE global generaba un overfitting masivo. Por ello, se ha modificado la arquitectura: el balanceo ya no es un paso previo al guardado del CSV, sino una transformación dinámica dentro del Pipeline de entrenamiento mediante **Validación Cruzada post-split**.
 
 ### 9.4. Persistencia (Serialization)
 Para garantizar que el modelo en producción (Streamlit) use los mismos parámetros de transformación, se ha guardado el escalador en:
