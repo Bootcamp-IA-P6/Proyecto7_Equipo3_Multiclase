@@ -1,4 +1,4 @@
-edad_anios,imc,dx_hipertension,dx_diabetes,dx_cancer,dx_artritis,fumadora_alguna_vez,actividad_fisica_vigorosa,nivel_pobreza_familiar,ui_frecuencia,ui_cantidad,ui_esfuerzo_presente,ui_urgencia_presente,ui_otro_tipo_presente,ui_molestia_percibida,ui_impacto_actividades,target_tipo_ui,etnia_blanca,etnia_hisp_mex,etnia_hisp_otra,etnia_negra,etnia_otra,pais_mexico,pais_usa
+edad_anios,imc,dx_hipertension,dx_diabetes,dx_cancer,dx_artritis,fumadora_alguna_vez,actividad_fisica_vigorosa,status_economico,ui_frecuencia,ui_cantidad,ui_esfuerzo_presente,ui_urgencia_presente,ui_otro_tipo_presente,ui_molestia_percibida,ui_impacto_actividades,target_tipo_ui,etnia_blanca,etnia_hisp_mex,etnia_hisp_otra,etnia_negra,etnia_otra,pais_mexico,pais_usa
 29.0,37.8,0.0,0.0,0.0,0.0,0.0,1,3.0,1,1,0,0,0,1,1,none,0,0,0,0,1,1,0
 21.0,30.04,0.0,0.0,0.0,0.0,0.0,1,3.0,2,1,0,0,0,1,1,none,0,0,1,0,0,1,0
 44.0,39.1,0.0,0.0,0.0,0.0,0.0,1,2.4,4,1,1,0,0,2,2,stress,0,1,0,0,0,1,0
