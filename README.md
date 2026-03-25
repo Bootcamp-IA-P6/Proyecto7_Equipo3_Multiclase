@@ -178,6 +178,77 @@ uv run jupyter notebook
 | Notebooks            | Jupyter                                      |
 
 ---
+## 🐳 Docker — Despliegue con contenedor
+
+### Requisitos previos
+- [Docker](https://docs.docker.com/get-docker/) instalado
+- [Docker Compose](https://docs.docker.com/compose/install/) instalado
+- Archivo `.env` con las variables de entorno de Supabase (ver `.env.example`)
+
+---
+
+### Variables de entorno
+
+Crea un archivo `.env` en la raiz del proyecto con las siguientes variables:
+
+```env
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_KEY=tu-anon-key
+```
+
+---
+
+### Construir la imagen
+
+```bash
+docker build -t ui-classifier .
+```
+
+### Levantar con Docker Compose (recomendado)
+
+```bash
+# Levantar el servicio
+docker compose up --build
+
+# Levantar en segundo plano
+docker compose up --build -d
+
+# Ver logs
+docker compose logs -f
+
+# Parar el servicio
+docker compose down
+```
+
+### Levantar solo con Docker
+
+```bash
+# Construir
+docker build -t ui-classifier .
+
+# Ejecutar
+docker run -p 8501:8501 --env-file .env ui-classifier
+```
+
+### Acceder a la aplicacion
+
+Una vez levantado el contenedor, abre el navegador en:
+
+```
+http://localhost:8501
+```
+
+---
+
+### Estructura de archivos Docker
+
+```
+proyecto/
+├── Dockerfile          # Imagen de la app
+├── .dockerignore       # Archivos excluidos del contenedor
+├── docker-compose.yml  # Orquestacion del servicio
+└── .env                # Variables de entorno (NO subir a Git)
+```
 
 ## Equipo
 
