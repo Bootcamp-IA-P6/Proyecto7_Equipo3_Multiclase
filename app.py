@@ -54,7 +54,7 @@ def save_to_supabase(data: dict) -> tuple[bool, str]:
     except Exception as e:
         return False, f"❌ Error al insertar en Supabase: {e}"
 
-# ── CSS ──────────────────────────────────────────────────────────────────────
+# ── CSS (mobile-first) ───────────────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
@@ -88,29 +88,32 @@ html, body, [class*="css"] {
 
 .block-container {
     max-width: 560px !important;
-    padding: 2rem 1.5rem 6rem !important;
+    padding: 1.2rem 1rem 5rem !important;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
 .stDeployButton { display: none; }
 
-/* ── Buttons ── */
+/* ── Buttons (mobile-first: big touch targets) ── */
 .stButton > button {
     font-family: 'Nunito', sans-serif !important;
     border-radius: 14px !important;
-    font-size: 14px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     transition: all .2s ease !important;
     letter-spacing: 0.01em !important;
+    min-height: 48px !important;
+    -webkit-tap-highlight-color: transparent !important;
 }
 .stButton > button[kind="primary"] {
     background: linear-gradient(135deg, #f06292, #64b5f6) !important;
     border: none !important;
     color: #fff !important;
-    padding: 12px 24px !important;
+    padding: 14px 24px !important;
     box-shadow: 0 4px 15px rgba(240,98,146,0.35) !important;
 }
-.stButton > button[kind="primary"]:hover {
+.stButton > button[kind="primary"]:hover,
+.stButton > button[kind="primary"]:active {
     transform: translateY(-1px) !important;
     box-shadow: 0 6px 20px rgba(240,98,146,0.45) !important;
 }
@@ -118,13 +121,13 @@ html, body, [class*="css"] {
     background: var(--surface) !important;
     border: 1.5px solid var(--border) !important;
     color: var(--text-dark) !important;
-    padding: 10px 16px !important;
+    padding: 12px 16px !important;
     backdrop-filter: blur(8px) !important;
 }
-.stButton > button[kind="secondary"]:hover {
+.stButton > button[kind="secondary"]:hover,
+.stButton > button[kind="secondary"]:active {
     border-color: #f48fb1 !important;
     background: rgba(252,228,236,0.9) !important;
-    transform: translateY(-1px) !important;
 }
 
 /* ── Selected option highlight ── */
@@ -134,12 +137,20 @@ html, body, [class*="css"] {
     box-shadow: 0 2px 12px rgba(240,98,146,0.2) !important;
 }
 
-div[data-testid="stCheckbox"] label { font-size: 14px !important; color: var(--text-mid) !important; }
+div[data-testid="stCheckbox"] label {
+    font-size: 15px !important;
+    color: var(--text-mid) !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+}
 div[data-testid="stTextInput"] input {
     border-radius: 12px !important;
-    font-size: 14px !important;
+    font-size: 16px !important;
     border: 1.5px solid var(--border) !important;
     background: var(--surface) !important;
+    min-height: 48px !important;
+    /* prevent iOS zoom on focus */
 }
 div[data-testid="stTextInput"] input:focus {
     border-color: #f48fb1 !important;
@@ -150,7 +161,7 @@ div[data-testid="stTextInput"] input:focus {
 .prog-wrap {
     background: rgba(244,143,177,0.2);
     border-radius: 6px;
-    height: 4px;
+    height: 5px;
     overflow: hidden;
     margin-bottom: 6px;
 }
@@ -161,42 +172,42 @@ div[data-testid="stTextInput"] input:focus {
     transition: width .5s ease;
 }
 .step-hint {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-light);
     text-align: right;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     letter-spacing: .04em;
 }
 
 /* ── Question typography ── */
 .q-title {
     font-family: 'Playfair Display', serif;
-    font-size: 22px;
+    font-size: 21px;
     color: var(--text-dark);
     line-height: 1.35;
     margin: 0 0 6px;
 }
 .q-sub {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-light);
     line-height: 1.6;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
 }
 
 /* ── Welcome screen ── */
 .welcome-wrap {
     text-align: center;
-    padding: 2rem 0 1rem;
+    padding: 1.5rem 0 1rem;
     animation: fadeInUp .6s ease;
 }
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-.welcome-icon { font-size: 52px; margin-bottom: 16px; }
+.welcome-icon { font-size: 48px; margin-bottom: 14px; }
 .welcome-title {
     font-family: 'Playfair Display', serif;
-    font-size: 28px;
+    font-size: 26px;
     color: var(--text-dark);
     line-height: 1.3;
     margin: 0 0 12px;
@@ -209,14 +220,14 @@ div[data-testid="stTextInput"] input:focus {
     font-size: 15px;
     color: var(--text-mid);
     line-height: 1.7;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
 }
 .welcome-info {
     background: var(--surface);
     border: 1.5px solid var(--border);
     border-radius: 16px;
     padding: 16px 18px;
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-mid);
     line-height: 1.65;
     margin: 0 0 8px;
@@ -228,8 +239,8 @@ div[data-testid="stTextInput"] input:focus {
     background: var(--surface);
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
-    padding: 24px 22px;
-    margin-bottom: 16px;
+    padding: 20px 18px;
+    margin-bottom: 14px;
     backdrop-filter: blur(12px);
     box-shadow: var(--shadow);
     animation: fadeInUp .35s ease;
@@ -243,8 +254,8 @@ div[data-testid="stTextInput"] input:focus {
     background: linear-gradient(135deg, rgba(240,98,146,0.15), rgba(100,181,246,0.15));
     border: 1.5px solid rgba(240,98,146,0.4);
     border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 12px;
+    padding: 6px 14px;
+    font-size: 13px;
     color: #c2185b;
     font-weight: 600;
     margin-top: 10px;
@@ -262,7 +273,7 @@ div[data-testid="stTextInput"] input:focus {
     animation: fadeInUp .5s ease;
 }
 .result-header {
-    padding: 1.5rem 1.5rem 1.2rem;
+    padding: 1.3rem 1.2rem 1rem;
     background: linear-gradient(135deg, rgba(252,228,236,0.8), rgba(227,242,253,0.8));
     border-bottom: 1.5px solid var(--border);
 }
@@ -282,13 +293,13 @@ div[data-testid="stTextInput"] input:focus {
 .badge-urge   { background: #fce4ec; color: #b71c1c; border: 1px solid #ef9a9a; }
 .result-title {
     font-family: 'Playfair Display', serif;
-    font-size: 20px;
+    font-size: 19px;
     color: var(--text-dark);
     line-height: 1.35;
     margin: 0 0 8px;
 }
-.result-desc { font-size: 13px; color: var(--text-mid); line-height: 1.7; margin: 0; }
-.result-body { padding: 1.3rem 1.5rem; }
+.result-desc { font-size: 14px; color: var(--text-mid); line-height: 1.7; margin: 0; }
+.result-body { padding: 1.2rem; }
 
 .section-lbl {
     font-size: 10px;
@@ -300,10 +311,10 @@ div[data-testid="stTextInput"] input:focus {
     font-weight: 700;
 }
 .prob-row { margin-bottom: 12px; }
-.prob-meta { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+.prob-meta { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
 .prob-name { color: var(--text-mid); }
 .prob-pct  { font-weight: 700; color: var(--text-dark); }
-.prob-track { height: 6px; background: rgba(244,143,177,0.15); border-radius: 4px; overflow: hidden; }
+.prob-track { height: 7px; background: rgba(244,143,177,0.15); border-radius: 4px; overflow: hidden; }
 .prob-fill  { height: 100%; border-radius: 4px; transition: width .8s ease; }
 .pf-none   { background: linear-gradient(90deg, #66bb6a, #43a047); }
 .pf-stress { background: linear-gradient(90deg, #64b5f6, #2196f3); }
@@ -317,7 +328,7 @@ div[data-testid="stTextInput"] input:focus {
     gap: 10px;
     padding: 10px 0;
     border-bottom: 1px solid rgba(244,143,177,0.15);
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-mid);
     line-height: 1.55;
 }
@@ -345,18 +356,17 @@ div[data-testid="stTextInput"] input:focus {
     transition: all .2s ease;
     backdrop-filter: blur(8px);
 }
-.prof-card:hover {
+.prof-card:hover, .prof-card:active {
     border-color: #f48fb1;
     box-shadow: 0 4px 16px rgba(240,98,146,0.2);
-    transform: translateY(-2px);
 }
 .prof-icon { font-size: 24px; flex-shrink: 0; }
-.prof-name { font-size: 13px; font-weight: 700; color: var(--text-dark); margin: 0 0 3px; }
-.prof-why  { font-size: 12px; color: var(--text-mid); line-height: 1.45; margin: 0; }
-.prof-cta  { font-size: 11px; color: #e91e8c; margin: 6px 0 0; font-weight: 700; }
+.prof-name { font-size: 14px; font-weight: 700; color: var(--text-dark); margin: 0 0 3px; }
+.prof-why  { font-size: 13px; color: var(--text-mid); line-height: 1.45; margin: 0; }
+.prof-cta  { font-size: 12px; color: #e91e8c; margin: 6px 0 0; font-weight: 700; }
 
 .disclaimer {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-light);
     line-height: 1.7;
     border-top: 1px solid var(--border);
@@ -371,6 +381,33 @@ div[data-testid="stTextInput"] input:focus {
 
 /* ── Spinner text ── */
 .stSpinner > div { border-top-color: #f06292 !important; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — mobile-first adjustments
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+    .block-container {
+        max-width: 100% !important;
+        padding: 1rem 0.8rem 5rem !important;
+    }
+    .q-title { font-size: 19px; }
+    .welcome-title { font-size: 23px; }
+    .welcome-icon { font-size: 42px; }
+    .quiz-card { padding: 18px 14px; }
+    .result-header { padding: 1rem; }
+    .result-body { padding: 1rem; }
+    .result-title { font-size: 17px; }
+
+    /* Stack columns vertically on mobile */
+    [data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -414,15 +451,19 @@ for k, v in DEFAULTS.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
+# ── Total steps (for progress) ────────────────────────────────────────────────
+TOTAL_QUESTIONS = 12
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def go(step: int):
     st.session_state.step = step
     st.rerun()
 
-def progress(pct: float, label: str):
+def progress(current_q: int):
+    pct = round(current_q / TOTAL_QUESTIONS * 100)
     st.markdown(
         f'<div class="prog-wrap"><div class="prog-fill" style="width:{pct}%"></div></div>'
-        f'<div class="step-hint">{label}</div>',
+        f'<div class="step-hint">Pregunta {current_q} de {TOTAL_QUESTIONS}</div>',
         unsafe_allow_html=True,
     )
 
@@ -752,7 +793,7 @@ def google_search_url(query: str, city: str) -> str:
     return f"https://www.google.com/search?q={urllib.parse.quote_plus(full_query)}"
 
 # ════════════════════════════════════════════════════════════════════════════
-# SCREENS
+# SCREENS — one question per view for mobile-friendly UX
 # ════════════════════════════════════════════════════════════════════════════
 
 step = st.session_state.step
@@ -794,7 +835,7 @@ if step == 0:
 
 # ── 1 · Tipo de incontinencia ─────────────────────────────────────────────────
 elif step == 1:
-    progress(12, "Pregunta 1 de 9")
+    progress(1)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("¿Qué es lo que más se parece a lo que te pasa?")
     choice_buttons("q_tipo", [
@@ -808,7 +849,7 @@ elif step == 1:
 
 # ── 2 · Frecuencia ────────────────────────────────────────────────────────────
 elif step == 2:
-    progress(24, "Pregunta 2 de 9")
+    progress(2)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("¿Con qué frecuencia ocurren las pérdidas?")
     choice_buttons("q_frec", [
@@ -823,20 +864,20 @@ elif step == 2:
 
 # ── 3 · Cantidad ──────────────────────────────────────────────────────────────
 elif step == 3:
-    progress(36, "Pregunta 3 de 9")
+    progress(3)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("¿Cuánta orina se te escapa habitualmente?")
     choice_buttons("q_cant", [
         ("1", "💧", "Unas gotas"),
         ("2", "💦", "Un chorro pequeño"),
         ("3", "🌊", "Bastante cantidad"),
-    ], cols=3)
+    ])
     st.markdown('</div>', unsafe_allow_html=True)
     nav(2, 4, next_disabled=not st.session_state.q_cant)
 
 # ── 4 · Molestia ──────────────────────────────────────────────────────────────
 elif step == 4:
-    progress(48, "Pregunta 4 de 9")
+    progress(4)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("¿Cuánta molestia te causa?", "Considera la incomodidad física y emocional.")
     choice_buttons("q_molestia", [
@@ -851,7 +892,7 @@ elif step == 4:
 
 # ── 5 · Impacto ───────────────────────────────────────────────────────────────
 elif step == 5:
-    progress(55, "Pregunta 5 de 9")
+    progress(5)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header(
         "¿Cómo afecta esto a tus actividades diarias?",
@@ -866,18 +907,16 @@ elif step == 5:
     st.markdown('</div>', unsafe_allow_html=True)
     nav(4, 6, next_disabled=st.session_state.q_impacto is None)
 
-# ── 6 · Datos personales ──────────────────────────────────────────────────────
+# ── 6 · Datos personales ─────────────────────────────────────────────────────
 elif step == 6:
-    progress(64, "Pregunta 6 de 9")
+    progress(6)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("Cuéntanos un poco sobre ti", "Mejora la orientación — no son obligatorios.")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.session_state.edad   = st.text_input("Edad (años)", value=st.session_state.edad,   placeholder="45")
-    with c2:
-        st.session_state.peso   = st.text_input("Peso (kg)",   value=st.session_state.peso,   placeholder="68")
-    with c3:
-        st.session_state.altura = st.text_input("Altura (cm)", value=st.session_state.altura, placeholder="162")
+
+    st.session_state.edad   = st.text_input("Edad (años)",  value=st.session_state.edad,   placeholder="45")
+    st.session_state.peso   = st.text_input("Peso (kg)",    value=st.session_state.peso,   placeholder="68")
+    st.session_state.altura = st.text_input("Altura (cm)",  value=st.session_state.altura, placeholder="162")
+
     try:
         imc_val = round(float(st.session_state.peso) / (float(st.session_state.altura) / 100) ** 2, 1)
         st.caption(f"✦ IMC calculado: **{imc_val}** kg/m²")
@@ -886,9 +925,9 @@ elif step == 6:
     st.markdown('</div>', unsafe_allow_html=True)
     nav(5, 7)
 
-# ── 7 · Historial médico ──────────────────────────────────────────────────────
+# ── 7 · Historial médico ─────────────────────────────────────────────────────
 elif step == 7:
-    progress(73, "Pregunta 7 de 9")
+    progress(7)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header(
         "¿Te han diagnosticado alguna de estas condiciones?",
@@ -901,16 +940,22 @@ elif step == 7:
     st.markdown('</div>', unsafe_allow_html=True)
     nav(6, 8)
 
-# ── 8 · Estilo de vida ────────────────────────────────────────────────────────
+# ── 8 · Fumadora ─────────────────────────────────────────────────────────────
 elif step == 8:
-    progress(82, "Pregunta 8 de 9")
+    progress(8)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header("¿Has fumado alguna vez en tu vida?", "Incluye aunque hayas dejado de fumar.")
     choice_buttons("fumadora", [
         ("si", "🚬", "Sí, he fumado"),
         ("no", "🚭", "No, nunca he fumado"),
     ])
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    nav(7, 9, next_disabled=not st.session_state.fumadora)
+
+# ── 9 · Actividad física ─────────────────────────────────────────────────────
+elif step == 9:
+    progress(9)
+    st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header(
         "¿Realizas actividad física vigorosa habitualmente?",
         "Ej. correr, aeróbic intenso, deportes de contacto, ciclismo rápido.",
@@ -920,18 +965,16 @@ elif step == 8:
         ("no", "🚶", "No, o solo actividad ligera / moderada"),
     ])
     st.markdown('</div>', unsafe_allow_html=True)
-    all_done = st.session_state.fumadora and st.session_state.actividad
-    nav(7, 9, next_disabled=not all_done)
+    nav(8, 10, next_disabled=not st.session_state.actividad)
 
-# ── 9 · Perfil demográfico ────────────────────────────────────────────────────
-elif step == 9:
-    progress(91, "Pregunta 9 de 9")
+# ── 10 · Etnia ────────────────────────────────────────────────────────────────
+elif step == 10:
+    progress(10)
     st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header(
-        "Un par de datos más para personalizar la orientación",
-        "Son opcionales — si prefieres no responder pulsa directamente 'Ver resultado'.",
+        "¿Con qué grupo étnico te identificas?",
+        "Opcional — si prefieres no responder pulsa 'Siguiente'.",
     )
-    q_header("¿Con qué grupo étnico te identificas?")
     choice_buttons("etnia", [
         ("hisp_mex",  "🌮", "Hispana mexicana"),
         ("hisp_otra", "🌎", "Hispana de otro origen"),
@@ -940,14 +983,29 @@ elif step == 9:
         ("asiatica",  "🌸", "Asiática"),
         ("otra",      "🌍", "Otra / prefiero no decir"),
     ])
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    q_header("¿En qué país naciste?")
+    st.markdown('</div>', unsafe_allow_html=True)
+    nav(9, 11)
+
+# ── 11 · País de nacimiento ──────────────────────────────────────────────────
+elif step == 11:
+    progress(11)
+    st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
+    q_header(
+        "¿En qué país naciste?",
+        "Opcional — si prefieres no responder pulsa 'Siguiente'.",
+    )
     choice_buttons("pais", [
         ("usa",    "🇺🇸", "Estados Unidos"),
         ("mexico", "🇲🇽", "México"),
         ("otro",   "🌐",  "Otro país"),
-    ], cols=3)
-    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+    ])
+    st.markdown('</div>', unsafe_allow_html=True)
+    nav(10, 12)
+
+# ── 12 · Status económico ────────────────────────────────────────────────────
+elif step == 12:
+    progress(12)
+    st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
     q_header(
         "¿Cómo describirías tu situación económica?",
         "Orientativo — ninguna respuesta afecta negativamente tu resultado.",
@@ -959,10 +1017,10 @@ elif step == 9:
         ("5.0", "🏠", "Ingresos por encima de la media"),
     ])
     st.markdown('</div>', unsafe_allow_html=True)
-    nav(8, 10, next_label="Ver resultado 🌸")
+    nav(11, 13, next_label="Ver resultado 🌸")
 
-# ── 10 · Resultado ────────────────────────────────────────────────────────────
-elif step == 10:
+# ── 13 · Resultado ────────────────────────────────────────────────────────────
+elif step == 13:
     with st.spinner("Analizando tus respuestas con cuidado... 🌸"):
         s    = dict(st.session_state)
         pred, probs = classify(s)
