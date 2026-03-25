@@ -1,0 +1,41 @@
+# Datos crudos — no necesarios en produccion y muy pesados
+data/raw/
+data/processed/
+
+# Entorno virtual local
+.venv/
+
+# Variables de entorno locales
+.env
+.env.local
+
+# Notebooks — no van en produccion
+notebooks/
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Cache de uv
+.uv/
+
+# Git
+.git/
+.gitignore
+
+# Assets de desarrollo
+assets/
+docs/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Tests
+tests/
+
+# README (opcional — puedes quitarlo si quieres incluirlo)
+# README.md
