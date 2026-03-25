@@ -1,0 +1,28 @@
+/* 🎨 Gradiente pastel */
+.stApp {
+    background: linear-gradient(135deg, #fce4ec, #e3f2fd);
+}
+
+/* Cards */
+.card {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Botones */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(90deg, #90caf9, #f48fb1) !important;
+    border: none !important;
+}
+
+/* Animaciones suaves */
+* {
+    transition: all 0.2s ease-in-out;
+}

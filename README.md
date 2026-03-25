@@ -1,10 +1,11 @@
 # Clasificación Multiclase de Incontinencia Urinaria Femenina
 
-[![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)](https://www.python.org/)
 [![Dataset](https://img.shields.io/badge/Dataset-NHANES%202017--2023-green)](https://www.cdc.gov/nchs/nhanes/)
 [![License](https://img.shields.io/badge/License-Académico-lightgrey)]()
-[![Estado](https://img.shields.io/badge/Estado-En%20desarrollo-yellow)]()
+[![Estado](https://img.shields.io/badge/Estado-Finalizado-brightgreen)]()
 [![ML](https://img.shields.io/badge/ML-XGBoost%20%7C%20RF%20%7C%20LightGBM-orange)]()
+[![Streamlit](https://img.shields.io/badge/App-Streamlit-ff4b4b?logo=streamlit)](https://streamlit.io/)
 [![uv](https://img.shields.io/badge/uv-Package%20Manager-blueviolet)](https://docs.astral.sh/uv/)
 
 Proyecto de Machine Learning para clasificación multiclase del tipo de incontinencia urinaria en mujeres adultas, desarrollado a partir del dataset NHANES (CDC, 2017–2023).
@@ -77,38 +78,40 @@ Desarrollar un modelo de clasificación multiclase capaz de predecir el tipo de 
 - Los hiperparámetros se optimizan con **Optuna** + validación cruzada estratificada (`StratifiedKFold`, k=5).
 - El ensemble final utiliza `VotingClassifier(voting='soft')` con pesos proporcionales al **F1-macro** de cada modelo en CV.
 
-> **Pendiente:** El ensemble final está en desarrollo. Se guardará en `models/ensemble_final.pkl` una vez completado.
-
 ---
 
 ## Estructura del repositorio
 
 ```
 Proyecto7_Equipo3_Multiclase/
-├── assets/                        # Gráficos generados (EDA, matrices de confusión, etc.)
+├── app/                          # Paquete de la app Streamlit
+│   ├── ___init___.py
+│   └── styles.css                # Estilos CSS personalizados
+├── assets/                       # Gráficos generados (EDA, matrices de confusión, etc.)
 ├── data/
-│   ├── raw/                       # Dataset original (nhanes_ui_women.csv)
-│   └── processed/                 # Datos limpios y splits train/test
+│   ├── raw/                      # Dataset original (nhanes_ui_women.csv)
+│   └── processed/                # Datos limpios y splits train/test
 ├── docs/
-│   ├── data_raw_dictionary.md     # Diccionario de variables originales
+│   ├── data_raw_dictionary.md    # Diccionario de variables originales
 │   ├── data_processed_dictionary.md  # Diccionario de variables procesadas
-│   └── etl_report.md             # Reporte de decisiones ETL
-├── models/                        # Modelos serializados (.pkl)
-│   ├── pipeline.pkl               # Pipeline de preprocesamiento
-│   ├── cv_config.pkl              # Configuración de validación cruzada
-│   ├── random_forest.pkl          # Modelo Random Forest
-│   └── ensemble_final.pkl         # (pendiente) Ensemble final
+│   └── etl_report.md            # Reporte de decisiones ETL
+├── models/                       # Modelos serializados (.pkl)
+│   ├── pipeline.pkl              # Pipeline de preprocesamiento
+│   ├── cv_config.pkl             # Configuración de validación cruzada
+│   └── random_forest.pkl         # Modelo Random Forest
 ├── notebooks/
-│   ├── 00_eda_etl.ipynb           # Exploración de datos y ETL
-│   ├── 01_pipeline.ipynb          # Pipeline de preprocesamiento
-│   ├── 02_random_forest.ipynb     # Entrenamiento Random Forest
-│   ├── 03_lightgbm.ipynb          # Entrenamiento LightGBM
-│   ├── 04_xgboost.ipynb           # Entrenamiento XGBoost
-│   └── modeling/                  # Notebooks individuales del equipo
-├── src/                           # Código fuente de la app (en desarrollo)
-├── main.py                        # Punto de entrada
-├── pyproject.toml                 # Dependencias y configuración del proyecto
-├── uv.lock                        # Lockfile de dependencias
+│   ├── 00_eda_etl.ipynb          # Exploración de datos y ETL
+│   ├── 01_pipeline.ipynb         # Pipeline de preprocesamiento
+│   ├── 02_random_forest.ipynb    # Entrenamiento Random Forest
+│   ├── 03_lightgbm.ipynb         # Entrenamiento LightGBM
+│   ├── 04_xgboost.ipynb          # Entrenamiento XGBoost
+│   ├── 05_ensemble.ipynb         # Ensemble (Soft Voting)
+│   └── modeling/                 # Notebooks individuales del equipo
+├── src/
+│   └── db.py                     # Integración con Supabase
+├── app.py                        # Punto de entrada de la app Streamlit
+├── pyproject.toml                # Dependencias y configuración del proyecto
+├── uv.lock                       # Lockfile de dependencias
 └── README.md
 ```
 
@@ -118,7 +121,7 @@ Proyecto7_Equipo3_Multiclase/
 
 ### Requisitos previos
 
-- Python 3.13+
+- Python 3.11+
 - [uv](https://docs.astral.sh/uv/) (gestor de paquetes)
 
 ### Pasos
@@ -135,35 +138,44 @@ uv sync
 source .venv/bin/activate
 ```
 
+### Variables de entorno
+
+Crear un archivo `.env` en la raíz del proyecto con las credenciales de Supabase:
+
+```env
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_KEY=tu-clave-anon
+```
+
 ---
 
 ## Uso
 
-### Ejecución local
+### Ejecutar la app
 
 ```bash
-# Ejecutar los notebooks en orden
-uv run jupyter notebook
-
-# O ejecutar la app (en desarrollo)
-uv run uvicorn main:app --reload
+uv run streamlit run app.py
 ```
 
-### Con Docker
-
-> **Pendiente:** El Dockerfile se añadirá próximamente.
+### Ejecutar los notebooks
 
 ```bash
-# (Próximamente)
-docker build -t ui-classifier .
-docker run -p 8000:8000 ui-classifier
+uv run jupyter notebook
 ```
 
 ---
 
-## App desplegada
+## Tech Stack
 
-> **Pendiente:** El enlace a la aplicación desplegada se añadirá una vez completado el despliegue.
+| Categoría           | Tecnologías                                  |
+| -------------------- | -------------------------------------------- |
+| Lenguaje             | Python 3.11+                                 |
+| ML                   | scikit-learn, XGBoost, LightGBM, SMOTE       |
+| Optimización         | Optuna                                       |
+| App                  | Streamlit                                    |
+| Base de datos        | Supabase                                     |
+| Gestión de paquetes  | uv                                           |
+| Notebooks            | Jupyter                                      |
 
 ---
 
